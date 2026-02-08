@@ -1,0 +1,212 @@
+.profile-page {
+  max-width: 800px;
+}
+
+.profile-sections {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-6);
+}
+
+.profile-section h2 {
+  font-size: var(--font-size-lg);
+  margin: 0 0 var(--space-2) 0;
+}
+
+.profile-section-desc {
+  font-size: var(--font-size-sm);
+  color: var(--color-text-tertiary);
+  margin: 0 0 var(--space-5) 0;
+}
+
+.profile-form-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: var(--space-4);
+}
+
+@media (max-width: 600px) {
+  .profile-form-grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+/* Skills */
+.profile-skills-list {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-3);
+  margin-bottom: var(--space-5);
+}
+
+.profile-skill-item {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: var(--space-3) var(--space-4);
+  background: var(--color-bg);
+  border-radius: var(--radius-md);
+}
+
+.profile-skill-info {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+}
+
+.profile-skill-name {
+  font-size: var(--font-size-sm);
+  font-weight: 500;
+}
+
+.profile-skill-remove {
+  width: 20px;
+  height: 20px;
+  background: transparent;
+  border: none;
+  border-radius: var(--radius-full);
+  cursor: pointer;
+  font-size: var(--font-size-xs);
+  color: var(--color-text-tertiary);
+  transition: all var(--transition-fast);
+}
+
+.profile-skill-remove:hover {
+  background: var(--color-danger-soft);
+  color: var(--color-danger);
+}
+
+.profile-skill-level {
+  display: flex;
+  gap: var(--space-1);
+}
+
+.profile-skill-level-btn {
+  width: 28px;
+  height: 28px;
+  font-size: var(--font-size-xs);
+  font-weight: 500;
+  background: var(--color-surface);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-sm);
+  cursor: pointer;
+  transition: all var(--transition-fast);
+}
+
+.profile-skill-level-btn:hover {
+  border-color: var(--color-accent);
+}
+
+.profile-skill-level-btn.active {
+  background: var(--color-accent);
+  border-color: var(--color-accent);
+  color: white;
+}
+
+.profile-skill-add {
+  display: flex;
+  gap: var(--space-2);
+  margin-bottom: var(--space-4);
+}
+
+.profile-skill-add .form-input {
+  flex: 1;
+}
+
+.profile-skill-suggestions {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--space-2);
+  font-size: var(--font-size-sm);
+  color: var(--color-text-tertiary);
+}
+
+.profile-skill-suggestion {
+  padding: var(--space-1) var(--space-2);
+  font-size: var(--font-size-xs);
+  background: var(--color-bg);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-sm);
+  cursor: pointer;
+  transition: all var(--transition-fast);
+}
+
+.profile-skill-suggestion:hover:not(:disabled) {
+  border-color: var(--color-accent);
+  color: var(--color-accent);
+}
+
+.profile-skill-suggestion:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+/* Hours slider */
+.profile-hours-slider {
+  display: flex;
+  align-items: center;
+  gap: var(--space-4);
+}
+
+.profile-hours-slider input[type="range"] {
+  flex: 1;
+  height: 6px;
+  -webkit-appearance: none;
+  appearance: none;
+  background: var(--color-border-light);
+  border-radius: var(--radius-full);
+  outline: none;
+}
+
+.profile-hours-slider input[type="range"]::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  appearance: none;
+  width: 20px;
+  height: 20px;
+  background: var(--color-accent);
+  border-radius: var(--radius-full);
+  cursor: pointer;
+}
+
+.profile-hours-value {
+  font-size: var(--font-size-sm);
+  font-weight: 600;
+  color: var(--color-accent);
+  min-width: 80px;
+}
+
+/* Team options */
+.profile-team-options {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-2);
+}
+
+.profile-team-option {
+  padding: var(--space-2) var(--space-4);
+  font-size: var(--font-size-sm);
+  font-weight: 500;
+  background: var(--color-bg);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-md);
+  cursor: pointer;
+  transition: all var(--transition-fast);
+}
+
+.profile-team-option:hover {
+  border-color: var(--color-text-tertiary);
+}
+
+.profile-team-option.active {
+  background: var(--color-accent-soft);
+  border-color: var(--color-accent);
+  color: var(--color-accent);
+}
+
+/* Actions */
+.profile-actions {
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+}

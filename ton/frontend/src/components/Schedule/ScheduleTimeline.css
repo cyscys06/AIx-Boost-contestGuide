@@ -1,0 +1,356 @@
+/* ============================================
+   Schedule Timeline Component
+   ============================================ */
+
+.schedule-timeline {
+  background: var(--color-bg-panel);
+  border-radius: var(--radius-lg);
+  padding: var(--space-5);
+}
+
+/* Empty State */
+.schedule-empty {
+  text-align: center;
+  padding: var(--space-6);
+  background: var(--color-bg-panel);
+  border-radius: var(--radius-lg);
+}
+
+.schedule-empty-icon {
+  font-size: 40px;
+  margin-bottom: var(--space-3);
+}
+
+.schedule-empty h4 {
+  font-size: var(--font-size-base);
+  font-weight: 600;
+  margin-bottom: var(--space-2);
+}
+
+.schedule-empty p {
+  font-size: var(--font-size-sm);
+  color: var(--color-text-tertiary);
+  margin-bottom: var(--space-4);
+  line-height: 1.6;
+}
+
+.schedule-empty-hint {
+  display: block;
+  margin-top: var(--space-2);
+  font-size: var(--font-size-xs);
+  color: var(--color-text-tertiary);
+}
+
+/* Header */
+.schedule-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: var(--space-4);
+}
+
+.schedule-title {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+}
+
+.schedule-title h4 {
+  font-size: var(--font-size-sm);
+  font-weight: 600;
+  margin: 0;
+}
+
+.feasibility-badge {
+  padding: var(--space-1) var(--space-3);
+  font-size: var(--font-size-xs);
+  font-weight: 600;
+  border-radius: var(--radius-full);
+}
+
+.feasibility-badge.success {
+  background: var(--color-success-soft);
+  color: var(--color-success);
+}
+
+.feasibility-badge.warning {
+  background: var(--color-warning-soft);
+  color: var(--color-warning);
+}
+
+.feasibility-badge.danger {
+  background: var(--color-danger-soft);
+  color: var(--color-danger);
+}
+
+/* Warnings */
+.schedule-warnings {
+  margin-bottom: var(--space-4);
+}
+
+.schedule-warning {
+  display: flex;
+  align-items: flex-start;
+  gap: var(--space-2);
+  padding: var(--space-3);
+  background: var(--color-warning-soft);
+  border-radius: var(--radius-md);
+  margin-bottom: var(--space-2);
+}
+
+.schedule-warning:last-child {
+  margin-bottom: 0;
+}
+
+.schedule-warning p {
+  margin: 0;
+  font-size: var(--font-size-xs);
+  color: var(--color-text-primary);
+  line-height: 1.5;
+}
+
+/* Summary */
+.schedule-summary {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: var(--space-2);
+  padding: var(--space-3);
+  background: var(--color-surface);
+  border-radius: var(--radius-md);
+  margin-bottom: var(--space-4);
+}
+
+.summary-item {
+  text-align: center;
+}
+
+.summary-label {
+  display: block;
+  font-size: var(--font-size-xs);
+  color: var(--color-text-tertiary);
+  margin-bottom: var(--space-1);
+}
+
+.summary-value {
+  font-size: var(--font-size-sm);
+  font-weight: 600;
+  color: var(--color-text-primary);
+}
+
+/* Phases List */
+.phases-list {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
+  margin-bottom: var(--space-4);
+}
+
+.phase-item {
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+  padding: var(--space-3);
+  background: var(--color-surface);
+  border-radius: var(--radius-md);
+  cursor: pointer;
+  transition: all var(--transition-fast);
+  border: 2px solid transparent;
+}
+
+.phase-item:hover {
+  border-color: var(--color-border);
+}
+
+.phase-item.current {
+  border-color: var(--color-accent);
+  background: var(--color-accent-soft);
+}
+
+.phase-item.completed {
+  opacity: 0.7;
+}
+
+.phase-item.completed .phase-marker {
+  background: var(--color-success);
+  color: white;
+}
+
+/* Phase Marker */
+.phase-marker {
+  width: 28px;
+  height: 28px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: var(--color-bg);
+  border-radius: var(--radius-full);
+  font-size: var(--font-size-xs);
+  font-weight: 600;
+  color: var(--color-text-tertiary);
+  flex-shrink: 0;
+}
+
+.phase-item.in_progress .phase-marker {
+  background: var(--color-accent);
+  color: white;
+}
+
+/* Phase Content */
+.phase-content {
+  flex: 1;
+  min-width: 0;
+}
+
+.phase-header {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+  margin-bottom: var(--space-1);
+}
+
+.phase-icon {
+  font-size: var(--font-size-sm);
+}
+
+.phase-label {
+  font-size: var(--font-size-sm);
+  font-weight: 500;
+  color: var(--color-text-primary);
+}
+
+.phase-priority {
+  font-size: var(--font-size-xs);
+  padding: 2px var(--space-2);
+  border-radius: var(--radius-sm);
+}
+
+.phase-priority.must {
+  background: var(--color-accent-soft);
+  color: var(--color-accent-text);
+}
+
+.phase-priority.nice {
+  background: var(--color-bg);
+  color: var(--color-text-tertiary);
+}
+
+.phase-meta {
+  display: flex;
+  gap: var(--space-3);
+  font-size: var(--font-size-xs);
+  color: var(--color-text-tertiary);
+}
+
+/* Phase Status */
+.phase-status-indicator {
+  flex-shrink: 0;
+}
+
+.status-done {
+  font-size: var(--font-size-xs);
+  color: var(--color-success);
+  font-weight: 500;
+}
+
+.status-active {
+  font-size: var(--font-size-xs);
+  color: var(--color-accent);
+  font-weight: 500;
+}
+
+/* Actions */
+.schedule-actions {
+  display: flex;
+  gap: var(--space-2);
+}
+
+.schedule-delete-btn {
+  color: var(--color-text-muted, #888);
+}
+
+.schedule-delete-btn:hover {
+  color: var(--color-danger, #dc3545);
+}
+
+/* Log Modal */
+.log-modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0, 0, 0, 0.5);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
+}
+
+.log-modal {
+  background: var(--color-surface);
+  border-radius: var(--radius-xl);
+  padding: var(--space-6);
+  width: 90%;
+  max-width: 320px;
+}
+
+.log-modal h4 {
+  font-size: var(--font-size-base);
+  font-weight: 600;
+  margin: 0 0 var(--space-4) 0;
+  text-align: center;
+}
+
+.log-input-group {
+  margin-bottom: var(--space-5);
+}
+
+.log-input-group label {
+  display: block;
+  font-size: var(--font-size-sm);
+  color: var(--color-text-secondary);
+  margin-bottom: var(--space-2);
+  text-align: center;
+}
+
+.log-hours-input {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--space-4);
+}
+
+.log-hours-input button {
+  width: 36px;
+  height: 36px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: var(--color-bg);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-full);
+  font-size: var(--font-size-lg);
+  cursor: pointer;
+  transition: all var(--transition-fast);
+}
+
+.log-hours-input button:hover {
+  background: var(--color-accent-soft);
+  border-color: var(--color-accent);
+}
+
+.log-hours-input span {
+  font-size: var(--font-size-xl);
+  font-weight: 600;
+  min-width: 80px;
+  text-align: center;
+}
+
+.log-modal-actions {
+  display: flex;
+  gap: var(--space-2);
+}
+
+.log-modal-actions button {
+  flex: 1;
+}

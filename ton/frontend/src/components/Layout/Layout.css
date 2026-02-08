@@ -1,0 +1,47 @@
+.layout {
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  background: var(--color-bg);
+}
+
+.layout-main {
+  flex: 1;
+  padding-top: var(--header-height);
+  /* Page content animation */
+  animation: pageEnter 0.4s ease;
+}
+
+@keyframes pageEnter {
+  from {
+    opacity: 0;
+    transform: translateY(8px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* Page transitions */
+.page {
+  animation: fadeInUp 0.4s ease;
+}
+
+/* Smooth scrollbar styling */
+.layout-main::-webkit-scrollbar {
+  width: 8px;
+}
+
+.layout-main::-webkit-scrollbar-track {
+  background: var(--color-bg-secondary);
+}
+
+.layout-main::-webkit-scrollbar-thumb {
+  background: var(--color-border-strong);
+  border-radius: var(--radius-full);
+}
+
+.layout-main::-webkit-scrollbar-thumb:hover {
+  background: var(--color-text-tertiary);
+}

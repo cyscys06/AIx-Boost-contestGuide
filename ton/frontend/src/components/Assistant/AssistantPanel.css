@@ -1,0 +1,208 @@
+.assistant-panel {
+  position: fixed;
+  top: var(--header-height);
+  right: 0;
+  bottom: 0;
+  width: var(--assistant-width);
+  background: var(--color-surface);
+  border-left: 1px solid var(--color-border);
+  display: flex;
+  flex-direction: column;
+  z-index: 90;
+}
+
+.assistant-header {
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+  padding: var(--space-4);
+  border-bottom: 1px solid var(--color-border);
+}
+
+.assistant-avatar {
+  width: 40px;
+  height: 40px;
+  background: var(--color-accent-soft);
+  border-radius: var(--radius-lg);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.assistant-avatar-icon {
+  font-size: 20px;
+}
+
+.assistant-title {
+  flex: 1;
+}
+
+.assistant-title h3 {
+  font-size: var(--font-size-sm);
+  font-weight: 600;
+  margin: 0;
+}
+
+.assistant-subtitle {
+  font-size: var(--font-size-xs);
+  color: var(--color-text-tertiary);
+}
+
+.assistant-minimize {
+  width: 28px;
+  height: 28px;
+  background: transparent;
+  border: none;
+  border-radius: var(--radius-sm);
+  cursor: pointer;
+  color: var(--color-text-tertiary);
+  font-size: var(--font-size-sm);
+  transition: all var(--transition-fast);
+}
+
+.assistant-minimize:hover {
+  background: var(--color-bg);
+  color: var(--color-text-primary);
+}
+
+.assistant-content {
+  flex: 1;
+  overflow-y: auto;
+  padding: var(--space-4);
+}
+
+.assistant-message {
+  background: var(--color-bg);
+  border-radius: var(--radius-lg);
+  padding: var(--space-4);
+  margin-bottom: var(--space-4);
+}
+
+.assistant-message-warning {
+  background: var(--color-warning-soft);
+}
+
+.assistant-message-caution {
+  background: var(--color-verdict-mismatch-soft);
+  border-left: 3px solid var(--color-verdict-mismatch);
+}
+
+.assistant-message-suggestion {
+  background: var(--color-accent-soft);
+  border-left: 3px solid var(--color-accent);
+}
+
+.assistant-message-encouragement {
+  background: var(--color-success-soft);
+  border-left: 3px solid var(--color-success);
+}
+
+.assistant-message-text {
+  font-size: var(--font-size-sm);
+  color: var(--color-text-primary);
+  line-height: 1.6;
+  margin: 0 0 var(--space-3) 0;
+}
+
+.assistant-action-btn {
+  width: 100%;
+}
+
+.assistant-section-title {
+  font-size: var(--font-size-xs);
+  font-weight: 600;
+  color: var(--color-text-tertiary);
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  margin-bottom: var(--space-3);
+}
+
+.assistant-deadline-list {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.assistant-deadline-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: var(--space-2) 0;
+  border-bottom: 1px solid var(--color-border-light);
+}
+
+.assistant-deadline-item:last-child {
+  border-bottom: none;
+}
+
+.assistant-deadline-title {
+  font-size: var(--font-size-sm);
+  color: var(--color-text-secondary);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  margin-right: var(--space-2);
+}
+
+.assistant-deadline-days {
+  font-size: var(--font-size-xs);
+  font-weight: 600;
+  color: var(--color-text-tertiary);
+  flex-shrink: 0;
+}
+
+.assistant-deadline-item.urgent .assistant-deadline-days {
+  color: var(--color-danger);
+}
+
+.assistant-footer {
+  padding: var(--space-4);
+  border-top: 1px solid var(--color-border);
+}
+
+/* Minimized state */
+.assistant-minimized {
+  position: fixed;
+  bottom: var(--space-6);
+  right: var(--space-6);
+  width: 56px;
+  height: 56px;
+  background: var(--color-accent);
+  border-radius: var(--radius-full);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  box-shadow: var(--shadow-lg);
+  transition: transform var(--transition-fast);
+  z-index: 90;
+}
+
+.assistant-minimized:hover {
+  transform: scale(1.05);
+}
+
+.assistant-minimized-icon {
+  font-size: 24px;
+}
+
+.assistant-minimized-badge {
+  position: absolute;
+  top: 0;
+  right: 0;
+  width: 12px;
+  height: 12px;
+  background: var(--color-danger);
+  border: 2px solid var(--color-surface);
+  border-radius: var(--radius-full);
+}
+
+@media (max-width: 1024px) {
+  .assistant-panel {
+    display: none;
+  }
+  
+  .assistant-minimized {
+    display: flex;
+  }
+}

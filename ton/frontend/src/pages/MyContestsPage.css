@@ -1,0 +1,207 @@
+.my-contests-page {
+  max-width: 1200px;
+}
+
+.my-contests-layout {
+  display: grid;
+  grid-template-columns: 420px 1fr;
+  gap: var(--space-6);
+  min-height: 600px;
+}
+
+@media (max-width: 900px) {
+  .my-contests-layout {
+    grid-template-columns: 1fr;
+  }
+}
+
+/* List Section - Panel background for visual separation */
+.my-contests-list-section {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-4);
+  background: var(--color-bg-panel);
+  padding: var(--space-5);
+  border-radius: var(--radius-xl);
+  border: 1px solid var(--color-border);
+}
+
+.my-contests-list {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
+}
+
+.my-contests-list-item {
+  cursor: pointer;
+  border-radius: var(--radius-lg);
+  transition: all var(--transition-fast);
+}
+
+.my-contests-list-item.selected .contest-card {
+  border-color: var(--color-accent);
+  background: var(--color-accent-soft);
+}
+
+/* Detail Section */
+.my-contests-detail-section {
+  
+}
+
+.my-contests-detail {
+  position: sticky;
+  top: calc(var(--header-height) + var(--space-6));
+  background: var(--color-surface);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-xl);
+  padding: var(--space-6);
+}
+
+.my-contests-detail-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: var(--space-4);
+  margin-bottom: var(--space-4);
+}
+
+.my-contests-detail-header h2 {
+  font-size: var(--font-size-xl);
+  margin: 0;
+}
+
+.my-contests-detail-organizer {
+  font-size: var(--font-size-sm);
+  color: var(--color-text-tertiary);
+  margin: var(--space-1) 0 0 0;
+}
+
+.my-contests-detail-actions {
+  flex-shrink: 0;
+}
+
+/* Meta section with background */
+.my-contests-detail-meta {
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+  margin-bottom: var(--space-4);
+  padding: var(--space-3);
+  background: var(--color-bg-panel);
+  border-radius: var(--radius-md);
+}
+
+.my-contests-meta-item {
+  font-size: var(--font-size-sm);
+  color: var(--color-text-secondary);
+}
+
+.my-contests-priority {
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+  padding: var(--space-3);
+  background: var(--color-bg-section);
+  border-radius: var(--radius-md);
+  margin-bottom: var(--space-4);
+}
+
+.my-contests-priority-label {
+  font-size: var(--font-size-sm);
+  color: var(--color-text-tertiary);
+}
+
+.my-contests-priority-buttons {
+  display: flex;
+  gap: var(--space-1);
+}
+
+.my-contests-priority-btn {
+  padding: var(--space-1) var(--space-3);
+  font-size: var(--font-size-xs);
+  font-weight: 500;
+  background: var(--color-surface);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-sm);
+  cursor: pointer;
+  transition: all var(--transition-fast);
+}
+
+.my-contests-priority-btn:hover {
+  border-color: var(--color-text-tertiary);
+}
+
+.my-contests-priority-btn.active {
+  background: var(--color-accent-soft);
+  border-color: var(--color-accent);
+  color: var(--color-accent);
+}
+
+/* Checklist with section background */
+.my-contests-checklist {
+  background: var(--color-bg-panel);
+  padding: var(--space-4);
+  border-radius: var(--radius-lg);
+  margin-top: var(--space-4);
+}
+
+.my-contests-checklist h3 {
+  font-size: var(--font-size-sm);
+  font-weight: 600;
+  margin-bottom: var(--space-3);
+}
+
+.my-contests-checklist-list {
+  list-style: none;
+  padding: 0;
+  margin: 0 0 var(--space-4) 0;
+}
+
+.my-contests-checklist-item {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+  padding: var(--space-2);
+  font-size: var(--font-size-sm);
+  cursor: pointer;
+  transition: all var(--transition-fast);
+  background: var(--color-surface);
+  border-radius: var(--radius-sm);
+  margin-bottom: var(--space-1);
+}
+
+.my-contests-checklist-item:hover {
+  color: var(--color-accent);
+}
+
+.my-contests-checklist-item.done {
+  color: var(--color-text-tertiary);
+  text-decoration: line-through;
+  background: transparent;
+}
+
+.my-contests-checkbox {
+  color: var(--color-text-tertiary);
+}
+
+.my-contests-checklist-item.done .my-contests-checkbox {
+  color: var(--color-success);
+}
+
+.my-contests-checklist-empty {
+  font-size: var(--font-size-sm);
+  color: var(--color-text-tertiary);
+  margin-bottom: var(--space-4);
+}
+
+.my-contests-checklist-form {
+  display: flex;
+  gap: var(--space-2);
+}
+
+.my-contests-checklist-form .form-input {
+  flex: 1;
+  padding: var(--space-2) var(--space-3);
+  font-size: var(--font-size-sm);
+}
+

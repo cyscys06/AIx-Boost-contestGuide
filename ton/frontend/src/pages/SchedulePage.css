@@ -1,0 +1,433 @@
+/* ============================================
+   Schedule Page - 오늘 중심 + 리스트형
+   ============================================ */
+
+.schedule-page {
+  max-width: 900px;
+  margin: 0 auto;
+  padding-bottom: var(--space-12);
+}
+
+/* Page Header */
+.schedule-page-header {
+  margin-bottom: var(--space-6);
+  padding: var(--space-5);
+  background: var(--gradient-hero);
+  border-radius: var(--radius-xl);
+}
+
+.schedule-title-section h1 {
+  font-size: var(--font-size-2xl);
+  font-weight: 700;
+  margin-bottom: var(--space-2);
+}
+
+.schedule-title-section p {
+  font-size: var(--font-size-sm);
+  color: var(--color-text-secondary);
+  margin: 0;
+}
+
+/* Content - Single column flow */
+.schedule-content {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-6);
+}
+
+/* Section titles */
+.section-title {
+  font-size: var(--font-size-lg);
+  font-weight: 600;
+  color: var(--color-text-primary);
+  margin-bottom: var(--space-4);
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+}
+
+.section-title-icon {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 28px;
+  height: 28px;
+  background: var(--color-accent-soft);
+  color: var(--color-accent);
+  font-size: var(--font-size-sm);
+  font-weight: 700;
+  border-radius: var(--radius-md);
+}
+
+/* 1. 오늘의 할 일 */
+.schedule-today-section {
+  background: var(--color-surface);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-xl);
+  padding: var(--space-6);
+}
+
+.today-focus-list {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-4);
+}
+
+.today-focus-card {
+  display: flex;
+  align-items: center;
+  gap: var(--space-4);
+  padding: var(--space-4);
+  background: var(--color-bg);
+  border-radius: var(--radius-lg);
+  border-left: 4px solid var(--color-accent);
+  cursor: pointer;
+  transition: all var(--transition-normal);
+}
+
+.today-focus-card:hover {
+  background: var(--color-accent-soft);
+  transform: translateX(4px);
+  box-shadow: var(--shadow-sm);
+}
+
+.today-focus-main {
+  flex: 1;
+  min-width: 0;
+}
+
+.today-focus-phase {
+  display: block;
+  font-size: var(--font-size-xs);
+  font-weight: 600;
+  color: var(--color-accent-text);
+  margin-bottom: var(--space-1);
+}
+
+.today-focus-title {
+  font-size: var(--font-size-base);
+  font-weight: 600;
+  color: var(--color-text-primary);
+  display: block;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.today-focus-meta {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: var(--space-1);
+}
+
+.today-focus-days {
+  font-size: var(--font-size-sm);
+  font-weight: 700;
+  color: var(--color-text-secondary);
+}
+
+.today-focus-days.high {
+  color: var(--color-danger);
+}
+
+.today-focus-days.medium {
+  color: var(--color-warning);
+}
+
+.today-focus-hours {
+  font-size: var(--font-size-xs);
+  color: var(--color-text-tertiary);
+}
+
+.today-focus-btn {
+  flex-shrink: 0;
+}
+
+.today-empty {
+  padding: var(--space-8);
+  text-align: center;
+  background: var(--color-bg);
+  border-radius: var(--radius-lg);
+}
+
+.today-empty p {
+  margin: 0;
+  font-size: var(--font-size-sm);
+  color: var(--color-text-secondary);
+}
+
+.today-empty-hint {
+  margin-top: var(--space-2) !important;
+  font-size: var(--font-size-xs) !important;
+  color: var(--color-text-tertiary) !important;
+}
+
+/* 2. 이번 주 일정 */
+.schedule-week-section {
+  background: var(--color-surface);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-xl);
+  padding: var(--space-6);
+}
+
+.schedule-week-header {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-4);
+  margin-bottom: var(--space-4);
+}
+
+.schedule-week-header .section-title {
+  margin-bottom: 0;
+}
+
+.week-navigation {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+  flex-wrap: wrap;
+}
+
+.week-navigation .week-label {
+  font-size: var(--font-size-sm);
+  font-weight: 600;
+  color: var(--color-text-secondary);
+  min-width: 140px;
+  text-align: center;
+}
+
+.week-list {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
+}
+
+.week-list-day {
+  display: grid;
+  grid-template-columns: 80px 1fr;
+  gap: var(--space-4);
+  align-items: flex-start;
+  padding: var(--space-3) var(--space-4);
+  background: var(--color-bg);
+  border-radius: var(--radius-md);
+  transition: background var(--transition-fast);
+}
+
+.week-list-day.today {
+  background: var(--color-accent-soft);
+  border: 2px solid var(--color-accent);
+}
+
+.week-list-day-header {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+}
+
+.week-list-day-name {
+  font-size: var(--font-size-sm);
+  font-weight: 600;
+  color: var(--color-text-primary);
+  min-width: 24px;
+}
+
+.week-list-day-date {
+  font-size: var(--font-size-xs);
+  color: var(--color-text-tertiary);
+}
+
+.week-list-today-badge {
+  font-size: 10px;
+  font-weight: 700;
+  padding: 2px 6px;
+  background: var(--color-accent);
+  color: white;
+  border-radius: var(--radius-sm);
+  margin-left: var(--space-2);
+}
+
+.week-list-day.today .week-list-day-name {
+  color: var(--color-accent);
+}
+
+.week-list-day-events {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-2);
+}
+
+.week-list-event {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-2);
+  padding: var(--space-1) var(--space-3);
+  background: var(--color-surface);
+  border-radius: var(--radius-sm);
+  font-size: var(--font-size-sm);
+  cursor: pointer;
+  transition: all var(--transition-fast);
+  border-left: 3px solid var(--color-accent);
+}
+
+.week-list-event:hover {
+  background: var(--color-accent-soft);
+}
+
+.week-list-event.deadline {
+  border-left-color: var(--color-danger);
+  background: var(--color-danger-soft);
+}
+
+.week-event-phase,
+.week-event-deadline {
+  font-weight: 600;
+  color: var(--color-text-secondary);
+}
+
+.week-event-deadline {
+  color: var(--color-danger);
+}
+
+.week-event-title {
+  color: var(--color-text-primary);
+  max-width: 180px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.week-list-empty {
+  font-size: var(--font-size-sm);
+  color: var(--color-text-tertiary);
+}
+
+/* 3. Summary Section - 다가오는 마감, 일정 미생성 */
+.schedule-summary-section {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  gap: var(--space-4);
+}
+
+.summary-card {
+  background: var(--color-surface);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-xl);
+  padding: var(--space-5);
+}
+
+.summary-card h3 {
+  font-size: var(--font-size-base);
+  font-weight: 600;
+  margin-bottom: var(--space-4);
+}
+
+/* Deadlines Card */
+.deadline-item {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: var(--space-3);
+  background: var(--color-bg);
+  border-radius: var(--radius-md);
+  margin-bottom: var(--space-2);
+  cursor: pointer;
+  transition: all var(--transition-fast);
+}
+
+.deadline-item:last-child {
+  margin-bottom: 0;
+}
+
+.deadline-item:hover {
+  background: var(--color-bg-secondary);
+}
+
+.deadline-title {
+  font-size: var(--font-size-sm);
+  color: var(--color-text-primary);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  max-width: 200px;
+}
+
+.deadline-days {
+  font-size: var(--font-size-sm);
+  font-weight: 700;
+  color: var(--color-text-secondary);
+  flex-shrink: 0;
+}
+
+.deadline-days.urgent {
+  color: var(--color-danger);
+}
+
+.no-deadlines {
+  font-size: var(--font-size-sm);
+  color: var(--color-text-tertiary);
+  text-align: center;
+  padding: var(--space-4);
+  margin: 0;
+}
+
+/* Unscheduled Card */
+.unscheduled-hint {
+  font-size: var(--font-size-xs);
+  color: var(--color-text-tertiary);
+  margin-bottom: var(--space-4);
+}
+
+.unscheduled-item {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-3);
+  padding: var(--space-3);
+  background: var(--color-bg);
+  border-radius: var(--radius-md);
+  margin-bottom: var(--space-2);
+}
+
+.unscheduled-item:last-child {
+  margin-bottom: 0;
+}
+
+.unscheduled-title {
+  font-size: var(--font-size-sm);
+  color: var(--color-text-primary);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  flex: 1;
+  min-width: 0;
+}
+
+/* Responsive */
+@media (max-width: 600px) {
+  .schedule-page {
+    padding: 0 var(--space-4) var(--space-12);
+  }
+
+  .today-focus-card {
+    flex-wrap: wrap;
+  }
+
+  .today-focus-btn {
+    width: 100%;
+  }
+
+  .week-list-day {
+    grid-template-columns: 1fr;
+  }
+
+  .week-list-day-header {
+    margin-bottom: var(--space-2);
+  }
+
+  .schedule-summary-section {
+    grid-template-columns: 1fr;
+  }
+}

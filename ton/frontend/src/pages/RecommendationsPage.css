@@ -1,0 +1,177 @@
+.recommendations-page {
+  padding-bottom: var(--space-12);
+}
+
+/* Profile Incomplete Banner */
+.profile-incomplete-banner {
+  background: linear-gradient(135deg, var(--color-accent-soft) 0%, var(--color-secondary-soft) 100%);
+  border: 1px solid var(--color-accent);
+  border-radius: var(--radius-xl);
+  padding: var(--space-5);
+  margin-bottom: var(--space-6);
+}
+
+.profile-incomplete-content {
+  display: flex;
+  align-items: center;
+  gap: var(--space-4);
+}
+
+.profile-incomplete-icon {
+  font-size: 32px;
+  flex-shrink: 0;
+}
+
+.profile-incomplete-text {
+  flex: 1;
+}
+
+.profile-incomplete-text strong {
+  display: block;
+  font-size: var(--font-size-base);
+  color: var(--color-text-primary);
+  margin-bottom: var(--space-1);
+}
+
+.profile-incomplete-text p {
+  font-size: var(--font-size-sm);
+  color: var(--color-text-secondary);
+  margin: 0;
+}
+
+@media (max-width: 600px) {
+  .profile-incomplete-content {
+    flex-direction: column;
+    text-align: center;
+  }
+}
+
+/* Recommendations Grid */
+.recommendations-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(360px, 1fr));
+  gap: var(--space-5);
+}
+
+@media (max-width: 768px) {
+  .recommendations-grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+/* Deadline Badge */
+.deadline-badge {
+  display: inline-flex;
+  align-items: center;
+  padding: var(--space-1) var(--space-2);
+  background: var(--color-bg-secondary);
+  color: var(--color-text-secondary);
+  font-size: var(--font-size-xs);
+  font-weight: 600;
+  border-radius: var(--radius-sm);
+  margin-left: var(--space-2);
+}
+
+.deadline-badge.urgent {
+  background: var(--color-danger-soft);
+  color: var(--color-danger);
+}
+
+/* Recommendation Warning */
+.recommendation-warning {
+  background: var(--color-warning-soft);
+  color: var(--color-warning);
+  font-size: var(--font-size-xs);
+  padding: var(--space-2) var(--space-3);
+  border-radius: var(--radius-md);
+  margin-bottom: var(--space-3);
+}
+
+/* Expanded Content */
+.recommendation-card-expanded {
+  animation: fadeIn 0.2s ease;
+}
+
+.recommendation-card-description {
+  font-size: var(--font-size-sm);
+  color: var(--color-text-secondary);
+  line-height: 1.7;
+  margin-bottom: var(--space-4);
+}
+
+.recommendation-card-details {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: var(--space-4);
+}
+
+@media (max-width: 600px) {
+  .recommendation-card-details {
+    grid-template-columns: 1fr;
+  }
+}
+
+.detail-section h4 {
+  font-size: var(--font-size-sm);
+  font-weight: 600;
+  color: var(--color-text-primary);
+  margin-bottom: var(--space-2);
+}
+
+.detail-section ul {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.detail-section li {
+  font-size: var(--font-size-sm);
+  color: var(--color-text-secondary);
+  padding: var(--space-1) 0;
+  padding-left: var(--space-4);
+  position: relative;
+}
+
+.detail-section li::before {
+  content: '•';
+  position: absolute;
+  left: 0;
+  color: var(--color-accent);
+}
+
+/* AI Notice */
+.ai-notice {
+  display: flex;
+  align-items: flex-start;
+  gap: var(--space-4);
+  background: var(--color-bg-secondary);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-xl);
+  padding: var(--space-5);
+  margin-top: var(--space-8);
+}
+
+.ai-notice-icon {
+  font-size: 28px;
+  flex-shrink: 0;
+}
+
+.ai-notice-content h4 {
+  font-size: var(--font-size-sm);
+  font-weight: 600;
+  color: var(--color-text-primary);
+  margin-bottom: var(--space-1);
+}
+
+.ai-notice-content p {
+  font-size: var(--font-size-sm);
+  color: var(--color-text-tertiary);
+  margin: 0;
+  line-height: 1.6;
+}
+
+/* Card hover animation */
+.recommendation-card.expanded {
+  border-color: var(--color-accent);
+  box-shadow: 0 8px 24px rgba(14, 165, 233, 0.15);
+}
