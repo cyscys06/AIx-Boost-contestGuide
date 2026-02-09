@@ -25,7 +25,8 @@ export function generatePhases({
   totalEstimatedHours,
   difficulty,
   category,
-  schedulePressure
+  schedulePressure,
+  startDate
 }) {
   const phasesToUse = isShortTimeline(workDays) ? SHORT_TIMELINE_PHASES : DEFAULT_PHASES
 
@@ -40,7 +41,7 @@ export function generatePhases({
   const normalizedRatios = adjustedRatios.map(r => r / totalRatio)
 
   // Generate phases with dates
-  const today = new Date(startDate)
+  const today = new Date(startDate || new Date())
   today.setHours(0, 0, 0, 0)
   let cursor = 0
   const phases = phasesToUse.map((phase, index) => {

@@ -213,7 +213,16 @@ export function ContestsProvider({ children }) {
       actualContestId = contest.id
     }
     
-    if (!contest?.info?.deadline) return null
+    // Validate contest exists and has required data
+    if (!contest) {
+      console.error('Contest not found:', contestId)
+      return null
+    }
+    
+    if (!contest?.info?.deadline) {
+      console.error('Contest deadline not found:', contestId)
+      return null
+    }
 
     const deadline = new Date(contest.info.deadline)
     const today = new Date()
