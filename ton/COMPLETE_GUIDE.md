@@ -620,6 +620,104 @@ sudo systemctl restart contest-guide-api
 sudo systemctl restart nginx
 ```
 
+#### git pull 덮어쓰기 오류 해결
+
+**증상:**
+```
+error: Your local changes to the following files would be overwritten by merge:
+  ...
+Please commit your changes or stash them before you merge.
+```
+
+**해결 방법 1: 로컬 변경사항 버리기 (권장 - 서버에서는 보통 원격 변경사항을 따름)**
+
+```bash
+cd /var/www/contest-guide
+
+# 현재 상태 확인
+sudo git status
+
+# 로컬 변경사항 모두 버리기 (주의: 로컬 수정사항이 모두 사라집니다)
+sudo git reset --hard HEAD
+
+# 원격 변경사항 가져오기
+sudo git pull origin main
+
+# 프론트엔드 재빌드
+cd ton/frontend
+npm install
+npm run build
+
+# 백엔드 재시작
+sudo systemctl restart contest-guide-api
+sudo systemctl restart nginx
+```
+
+**해결 방법 2: 로컬 변경사항 임시 저장 후 적용**
+
+```bash
+cd /var/www/contest-guide
+
+# 로컬 변경사항 임시 저장
+sudo git stash
+
+# 원격 변경사항 가져오기
+sudo git pull origin main
+
+# 저장했던 변경사항 다시 적용 (필요한 경우)
+sudo git stash pop
+
+# 프론트엔드 재빌드
+cd ton/frontend
+npm install
+npm run build
+
+# 백엔드 재시작
+sudo systemctl restart contest-guide-api
+sudo systemctl restart nginx
+```
+
+**해결 방법 3: 특정 파일만 원격 버전으로 되돌리기**
+
+```bash
+cd /var/www/contest-guide
+
+# 특정 파일만 원격 버전으로 되돌리기
+sudo git checkout origin/main -- 파일경로
+
+# 예시:
+sudo git checkout origin/main -- ton/frontend/package.json
+
+# 그 후 pull
+sudo git pull origin main
+```
+
+**해결 방법 4: 강제로 원격 버전으로 덮어쓰기**
+
+```bash
+cd /var/www/contest-guide
+
+# 원격 저장소 정보 가져오기
+sudo git fetch origin
+
+# 로컬 브랜치를 원격 브랜치로 강제로 리셋 (주의: 모든 로컬 변경사항 삭제)
+sudo git reset --hard origin/main
+
+# 프론트엔드 재빌드
+cd ton/frontend
+npm install
+npm run build
+
+# 백엔드 재시작
+sudo systemctl restart contest-guide-api
+sudo systemctl restart nginx
+```
+
+**주의사항:**
+- 서버에서는 일반적으로 **방법 1 또는 방법 4**를 사용하는 것이 안전합니다
+- 서버의 로컬 변경사항은 보통 빌드 산출물이나 설정 파일이므로 원격 버전을 따르는 것이 좋습니다
+- 중요한 로컬 변경사항이 있다면 먼저 백업하세요
+
 ---
 
 ## 서버 설정 제거
