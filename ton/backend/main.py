@@ -9,7 +9,7 @@ import base64
 import time
 from typing import Optional
 
-from fastapi import FastAPI, File, Form, UploadFile, HTTPException
+from fastapi import FastAPI, File, Form, UploadFile
 from fastapi.middleware.cors import CORSMiddleware
 
 from config import (
@@ -25,7 +25,6 @@ from config import (
 )
 from schemas import (
     UserProfileInput,
-    AnalysisOptions,
     AnalysisResponse,
     ExtractionResponse,
     ExtractionData,

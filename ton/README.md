@@ -38,34 +38,47 @@ ton/
 └── README.md
 ```
 
-## 실행 방법
+## 빠른 시작
+
+### 서버 실행 방법
+
+**간단한 실행 가이드는 [`QUICK_START.md`](QUICK_START.md)를 참고하세요.**
+
+컴퓨터를 껐다 켤 때마다 참고하는 빠른 실행 가이드입니다.
+
+### 전체 가이드
+
+**상세한 가이드는 [`COMPLETE_GUIDE.md`](COMPLETE_GUIDE.md)를 참고하세요.**
+
+- 로컬 개발 환경 설정
+- 서버 배포 가이드
+- 문제 해결 가이드
+- Git 사용 가이드
+- 서버 설정 제거
+
+---
+
+## 기본 실행 방법
 
 ### 1. 백엔드 실행
 
 ```powershell
 cd backend
 
-# 가상환경 생성 및 활성화
-python -m venv venv
-venv\Scripts\activate
-
-# 의존성 설치
-pip install -r requirements.txt
+# 가상환경 활성화
+.\venv\Scripts\activate
 
 # 서버 실행
-uvicorn main:app --reload --port 8000
+python -m uvicorn main:app --reload --port 8000
 ```
 
-백엔드: http://localhost:8000
+백엔드: http://localhost:8000  
 API 문서: http://localhost:8000/docs
 
 ### 2. 프론트엔드 실행
 
 ```powershell
 cd frontend
-
-# 의존성 설치
-npm install
 
 # 개발 서버 실행
 npm run dev
@@ -106,8 +119,7 @@ npm run dev
 - [x] 백엔드 API 구조
 - [x] Mock 데이터 생성
 - [x] LocalStorage 연동
-- [ ] GPT-5.2 실제 연동
-- [ ] 이미지 분석 (Vision)
+- [x] 이미지 분석 (Vision)
 
 ## GPT 연동 위치
 

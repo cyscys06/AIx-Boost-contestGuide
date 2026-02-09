@@ -41,7 +41,12 @@ def get_api_mode() -> str:
     return "real" if is_api_key_valid() else "mock"
 
 # CORS Settings
-CORS_ORIGINS = DEFAULT_CORS_ORIGINS
+# Add server IP and domain to CORS origins
+CORS_ORIGINS = DEFAULT_CORS_ORIGINS + [
+    "http://202.31.147.98",
+    "http://contest-guide.ac.kr",
+    "https://contest-guide.ac.kr",
+]
 
 # File Upload Settings
 MAX_IMAGE_SIZE = MAX_IMAGE_SIZE_BYTES
