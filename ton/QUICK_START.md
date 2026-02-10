@@ -81,12 +81,120 @@ python -m uvicorn main:app --reload --port 8000
 
 ### 프론트엔드가 실행되지 않는 경우
 
+#### 오류: "EADDRINUSE" (포트가 이미 사용 중)
+
+```bash
+# Windows: 사용 중인 프로세스 종료
+netstat -ano | findstr :5173
+taskkill /PID [프로세스ID] /F
+
+# 또는 다른 포트 사용
+npm run dev -- --port 5174
+```
+
+#### 오류: "Permission denied" 또는 "sh: 1: vite: Permission denied"
+
+**즉시 해결 (Linux/Mac):**
+```bash
+cd frontend
+
+# vite 실행 파일에 권한 부여
+chmod +x node_modules/.bin/vite
+# 또는 모든 실행 파일에 권한 부여
+chmod +x node_modules/.bin/*
+
+# 서버 실행
+npm run dev
+```
+
+**"Operation not permitted" 오류가 발생하는 경우:**
+
+**방법 1: sudo 사용**
+```bash
+cd frontend
+sudo chmod +x node_modules/.bin/*
+sudo chown -R $USER:$USER node_modules
+npm run dev
+```
+
+**방법 2: node_modules 재설치 (가장 확실)**
+
+**권한 문제가 없는 경우:**
+```bash
+cd frontend
+rm -rf node_modules package-lock.json
+npm cache clean --force
+npm install
+npm run dev
+```
+
+**권한 문제가 있는 경우 (rm -rf가 안 될 때):**
+```bash
+cd frontend
+
+# sudo로 삭제
+sudo rm -rf node_modules package-lock.json
+
+# 또는 소유권 변경 후 삭제
+sudo chown -R $USER:$USER node_modules package-lock.json
+rm -rf node_modules package-lock.json
+
+# 재설치
+npm cache clean --force
+npm install
+npm run dev
+```
+
+**또는 삭제 없이 강제 재설치:**
+```bash
+cd frontend
+npm install --force
+npm run dev
+```
+
+**Windows:**
+```bash
+# 관리자 권한으로 터미널 실행 후
+cd frontend
+npm install --force
+npm run dev
+```
+
+**Linux/Mac (권한 문제가 지속되는 경우):**
+```bash
+cd frontend
+sudo chown -R $USER:$USER node_modules
+chmod -R +x node_modules/.bin
+npm run dev
+```
+
+**임시 해결 (npx 사용):**
+```bash
+cd frontend
+npx vite
+```
+
+#### 일반적인 해결 방법
+
 ```bash
 # 의존성 재설치
 cd frontend
-rm -rf node_modules
+rm -rf node_modules package-lock.json
+npm cache clean --force
 npm install
 npm run dev
+```
+
+#### 네트워크 접근이 안 되는 경우
+
+```javascript
+// vite.config.js 수정
+export default defineConfig({
+  server: {
+    host: '0.0.0.0',  // 모든 네트워크에서 접속 허용
+    port: 5173,
+  }
+})
 ```
 
 ### 포트가 이미 사용 중인 경우

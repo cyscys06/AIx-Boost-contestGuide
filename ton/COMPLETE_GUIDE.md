@@ -111,6 +111,48 @@ npm run dev
 
 ## 서버 배포 가이드
 
+### Windows 서버 배포
+
+#### Windows에서 포트 포워딩 설정 (해결됨!)
+
+**문제:** localhost는 되는데 IP 주소로 접속이 안 되는 경우
+
+**해결:** Windows 포트 포워딩 설정
+
+```powershell
+# 관리자 권한으로 PowerShell 실행 후
+netsh interface portproxy add v4tov4 listenport=80 listenaddress=0.0.0.0 connectport=80 connectaddress=172.28.241.135
+
+# 포트 포워딩 확인
+netsh interface portproxy show all
+
+# 포트 포워딩 삭제 (필요한 경우)
+netsh interface portproxy delete v4tov4 listenport=80 listenaddress=0.0.0.0
+```
+
+**설명:**
+- `listenport=80`: 외부에서 접속할 포트
+- `listenaddress=0.0.0.0`: 모든 네트워크 인터페이스에서 리스닝
+- `connectport=80`: 내부 서버의 포트
+- `connectaddress=172.28.241.135`: 내부 서버의 IP 주소 (실제 내부 IP로 변경)
+
+**다른 포트 사용 시:**
+```powershell
+# 포트 8080 사용
+netsh interface portproxy add v4tov4 listenport=8080 listenaddress=0.0.0.0 connectport=8080 connectaddress=172.28.241.135
+```
+
+**Windows 방화벽 설정:**
+```powershell
+# 포트 80 허용
+New-NetFirewallRule -DisplayName "HTTP Port 80" -Direction Inbound -LocalPort 80 -Protocol TCP -Action Allow
+
+# 포트 8080 허용
+New-NetFirewallRule -DisplayName "HTTP Port 8080" -Direction Inbound -LocalPort 8080 -Protocol TCP -Action Allow
+```
+
+---
+
 ### Linux 서버 배포 (권장)
 
 #### 1. 시스템 요구사항
@@ -317,12 +359,251 @@ sudo certbot renew --dry-run
 
 ## 문제 해결 가이드
 
+### 🔴 주요 접속 문제 해결
+
+#### 문제 1: localhost:5173에서만 접속되고 localhost만 치면 안 되는 문제
+
+**원인:**
+- 로컬 개발 환경에서는 Vite가 기본적으로 포트 5173에서만 실행됩니다
+- `localhost`만 입력하면 포트가 없어서 접속할 수 없습니다
+
+**해결 방법:**
+
+**로컬 개발 환경 (개발 중):**
+- 정상 동작입니다. `http://localhost:5173`으로 접속하세요
+- 또는 `vite.config.js`에서 포트를 80으로 변경할 수 있지만, 관리자 권한이 필요합니다
+
+**서버 배포 환경 (프로덕션):**
+- 서버에서는 Nginx를 통해 포트 80에서 서비스해야 합니다
+- 아래 "IP 주소로 접속이 안 되는 문제" 섹션을 참고하세요
+
+#### 문제 2: IP 주소(202.31.147.98)로 접속이 안 되는 문제
+
+**단계별 확인 및 해결:**
+
+**1단계: 서버에서 포트 리스닝 확인**
+```bash
+# 포트 80이 0.0.0.0에서 리스닝하는지 확인
+sudo ss -tlnp | grep :80
+
+# 결과 예시 (정상):
+# LISTEN 0 511 0.0.0.0:80 0.0.0.0:* users:(("nginx",pid=1234,fd=6))
+
+# 문제가 있는 경우:
+# LISTEN 0 511 127.0.0.1:80 0.0.0.0:*  ← 이렇게 나오면 문제!
+```
+
+**2단계: Nginx 설정 확인**
+```bash
+# Nginx 설정 파일 확인
+sudo cat /etc/nginx/sites-available/contest-guide | grep -E "listen|server_name"
+
+# 정상 설정:
+# listen 80;
+# server_name _;
+
+# 문제가 있는 경우:
+# listen 127.0.0.1:80;  ← 이렇게 되어 있으면 수정 필요
+# server_name localhost;  ← 이렇게 되어 있으면 수정 필요
+```
+
+**3단계: Nginx 설정 수정 (필요한 경우)**
+```bash
+# 설정 파일 수정
+sudo nano /etc/nginx/sites-available/contest-guide
+```
+
+다음과 같이 수정:
+```nginx
+server {
+    listen 80;  # IP 없이 포트만 (모든 인터페이스에서 리스닝)
+    server_name _;  # 모든 호스트 허용
+    
+    # ... 나머지 설정 ...
+}
+```
+
+또는 자동으로 수정:
+```bash
+# listen 설정 수정
+sudo sed -i 's/listen 127.0.0.1:80;/listen 80;/' /etc/nginx/sites-available/contest-guide
+sudo sed -i 's/listen 127.0.0.1:8080;/listen 8080;/' /etc/nginx/sites-available/contest-guide
+
+# server_name 설정 수정
+sudo sed -i 's/server_name localhost;/server_name _;/' /etc/nginx/sites-available/contest-guide
+sudo sed -i 's/server_name 127.0.0.1;/server_name _;/' /etc/nginx/sites-available/contest-guide
+
+# 기본 사이트 비활성화 (중요!)
+sudo rm -f /etc/nginx/sites-enabled/default
+
+# 설정 테스트
+sudo nginx -t
+
+# Nginx 재시작
+sudo systemctl restart nginx
+```
+
+**4단계: 방화벽 확인**
+```bash
+# UFW 상태 확인
+sudo ufw status
+
+# 포트 80 허용 확인
+sudo ufw status | grep 80
+
+# 포트 80이 허용되지 않은 경우
+sudo ufw allow 80/tcp
+sudo ufw reload
+
+# 또는 firewalld 사용 시
+sudo firewall-cmd --list-ports
+sudo firewall-cmd --permanent --add-port=80/tcp
+sudo firewall-cmd --reload
+```
+
+**5단계: 서버에서 직접 테스트**
+```bash
+# 서버에서 자신의 IP로 접속 테스트
+curl -I http://202.31.147.98
+
+# 또는
+curl -I http://localhost
+
+# 정상 응답 예시:
+# HTTP/1.1 200 OK
+# Server: nginx/1.18.0
+# ...
+```
+
+**6단계: 네트워크 레벨 확인**
+```bash
+# 서버의 네트워크 인터페이스 확인
+ip addr show
+
+# 공인 IP 확인
+curl ifconfig.me
+
+# 포트가 외부에서 열려있는지 확인 (온라인 도구 사용)
+# https://www.yougetsignal.com/tools/open-ports/
+# 또는
+# https://canyouseeme.org/
+```
+
+**여전히 안 되면:**
+- 학교 네트워크 관리자에게 포트 80 개방 요청
+- 또는 포트 8080 사용 (아래 참고)
+
+#### 문제 3: 도메인 주소로 접속이 안 되는 문제
+
+**원인:**
+- DNS A 레코드가 설정되지 않았거나
+- DNS 전파가 완료되지 않았거나
+- 도메인과 IP 주소가 매핑되지 않음
+
+**해결 방법:**
+
+**1단계: DNS 레코드 확인**
+```bash
+# 서버에서 DNS 확인
+dig contest-guide.ac.kr
+# 또는
+nslookup contest-guide.ac.kr
+
+# 정상 응답 예시:
+# contest-guide.ac.kr. 300 IN A 202.31.147.98
+
+# 문제가 있는 경우:
+# NXDOMAIN  ← DNS 레코드가 없음
+```
+
+**2단계: DNS A 레코드 설정**
+
+학교 도메인 관리자 페이지에 접속하여 다음을 설정:
+
+**설정 내용:**
+- **호스트/서브도메인**: `contest-guide`
+- **타입**: `A`
+- **값/IP 주소**: `202.31.147.98`
+- **TTL**: `300` (또는 기본값)
+
+**설정 예시:**
+```
+호스트: contest-guide
+타입: A
+값: 202.31.147.98
+TTL: 300
+```
+
+**3단계: DNS 전파 확인**
+```bash
+# DNS 전파 확인 (몇 분에서 몇 시간 소요될 수 있음)
+dig contest-guide.ac.kr
+nslookup contest-guide.ac.kr
+
+# 온라인 도구로도 확인 가능:
+# https://dnschecker.org/
+# https://www.whatsmydns.net/
+```
+
+**4단계: Nginx 설정에 도메인 추가 (선택사항)**
+```bash
+# Nginx 설정 파일 수정
+sudo nano /etc/nginx/sites-available/contest-guide
+```
+
+다음과 같이 수정:
+```nginx
+server {
+    listen 80;
+    server_name _ contest-guide.ac.kr;  # IP와 도메인 모두 허용
+    
+    # ... 나머지 설정 ...
+}
+```
+
+또는 도메인 전용 서버 블록 추가:
+```nginx
+# IP 주소로 접속
+server {
+    listen 80;
+    server_name _;
+    # ... 설정 ...
+}
+
+# 도메인으로 접속
+server {
+    listen 80;
+    server_name contest-guide.ac.kr;
+    # ... 동일한 설정 ...
+}
+```
+
+**5단계: Nginx 재시작**
+```bash
+sudo nginx -t
+sudo systemctl restart nginx
+```
+
+**6단계: 접속 테스트**
+```bash
+# 서버에서 테스트
+curl -I http://contest-guide.ac.kr
+
+# 브라우저에서 테스트
+# http://contest-guide.ac.kr
+```
+
+**DNS 설정이 완료되지 않은 경우:**
+- 학교 IT 관리자에게 DNS A 레코드 설정 요청
+- 설정 완료까지 시간이 걸릴 수 있음 (보통 몇 분~몇 시간)
+
 ### 정상 작동 시 표시되는 화면
 
 **접속 방법:**
-- `http://localhost` → 대시보드 페이지
-- `http://[서버IP]` → 대시보드 페이지
-- `http://contest-guide.ac.kr` → 대시보드 페이지 (DNS 설정 완료 후)
+- `http://localhost:5173` → 로컬 개발 환경 (Vite 개발 서버)
+- `http://localhost` → 서버에서 Nginx를 통해 접속 (서버 배포 후)
+- `http://202.31.147.98` → 서버 IP로 접속 (서버 배포 후)
+- `http://contest-guide.ac.kr` → 도메인으로 접속 (DNS 설정 완료 후)
 
 **정상 작동 시 표시되는 화면:**
 1. 상단 헤더: "KSNU AIX-Boost" 로고, 네비게이션 메뉴, 프로필 버튼
@@ -344,11 +625,472 @@ npx vite build
 
 #### `Permission denied` 오류
 
+**일반적인 권한 문제:**
 ```bash
 # 실행 권한 부여
 chmod +x node_modules/.bin/*
 npm run build
 ```
+
+#### `EACCES: permission denied, open 'vite.config.js.timestamp-*.mjs'` 오류
+
+**증상:**
+```
+failed to load config from /var/www/contest-guide/ton/frontend/vite.config.js
+error during build:
+Error: EACCES: permission denied, open '/var/www/contest-guide/ton/frontend/vite.config.js.timestamp-*.mjs'
+```
+
+**원인:**
+- Vite가 빌드 시 임시 파일을 생성하려고 하는데 권한이 없음
+- frontend 디렉토리나 vite.config.js 파일의 소유권 문제
+
+**해결 방법:**
+
+**방법 1: frontend 디렉토리 전체 소유권 변경 (권장)**
+```bash
+cd /var/www/contest-guide/ton/frontend
+
+# 현재 사용자로 소유권 변경
+sudo chown -R $USER:$USER .
+
+# 또는 특정 사용자로 변경 (예: www-data)
+# sudo chown -R www-data:www-data .
+
+# 권한 부여
+chmod -R 755 .
+
+# 빌드 실행
+npm run build
+```
+
+**방법 2: vite.config.js 및 임시 파일 권한 부여**
+```bash
+cd /var/www/contest-guide/ton/frontend
+
+# vite.config.js 권한 확인 및 수정
+sudo chown $USER:$USER vite.config.js
+chmod 644 vite.config.js
+
+# 임시 파일이 있다면 삭제
+rm -f vite.config.js.timestamp-*.mjs
+
+# node_modules 권한도 확인
+sudo chown -R $USER:$USER node_modules
+
+# 빌드 실행
+npm run build
+```
+
+**방법 3: npm 캐시 권한 수정**
+```bash
+cd /var/www/contest-guide/ton/frontend
+
+# npm 캐시 디렉토리 권한 확인
+npm config get cache
+
+# npm 캐시 권한 수정
+sudo chown -R $USER:$USER $(npm config get cache)
+
+# 또는 npm 캐시 정리
+npm cache clean --force
+
+# 빌드 실행
+npm run build
+```
+
+**방법 4: 프로젝트 전체 디렉토리 권한 수정**
+```bash
+# 프로젝트 루트에서
+cd /var/www/contest-guide
+
+# 전체 프로젝트 소유권 변경
+sudo chown -R $USER:$USER .
+
+# 또는 www-data 사용자인 경우
+# sudo chown -R www-data:www-data .
+
+# frontend로 이동하여 빌드
+cd ton/frontend
+npm run build
+```
+
+**방법 5: 빌드 디렉토리 권한 사전 설정**
+```bash
+cd /var/www/contest-guide/ton/frontend
+
+# dist 디렉토리 생성 및 권한 부여
+mkdir -p dist
+sudo chown -R $USER:$USER dist
+chmod -R 755 dist
+
+# 빌드 실행
+npm run build
+```
+
+**서버 환경에서 www-data 사용자로 빌드하는 경우:**
+```bash
+cd /var/www/contest-guide/ton/frontend
+
+# www-data 사용자로 소유권 변경
+sudo chown -R www-data:www-data .
+
+# www-data 사용자로 빌드 실행
+sudo -u www-data npm run build
+
+# 또는
+sudo su -s /bin/bash www-data -c "cd /var/www/contest-guide/ton/frontend && npm run build"
+```
+
+### 프론트엔드 서버 실행 오류
+
+#### 오류 1: "EADDRINUSE: address already in use" (포트가 이미 사용 중)
+
+**증상:**
+```
+Error: listen EADDRINUSE: address already in use :::5173
+```
+
+**해결 방법:**
+
+**방법 1: 사용 중인 프로세스 종료**
+```bash
+# Windows
+netstat -ano | findstr :5173
+taskkill /PID [프로세스ID] /F
+
+# Linux/Mac
+lsof -ti:5173 | xargs kill -9
+# 또는
+sudo kill -9 $(sudo lsof -t -i:5173)
+```
+
+**방법 2: 다른 포트 사용**
+```bash
+# vite.config.js 수정 또는 환경 변수 사용
+npm run dev -- --port 5174
+```
+
+**방법 3: Vite가 자동으로 다른 포트 사용**
+- Vite는 포트 5173이 사용 중이면 자동으로 5174, 5175 등을 시도합니다
+- 터미널 메시지에서 실제 사용 중인 포트를 확인하세요
+
+#### 오류 2: "Permission denied" (권한 문제)
+
+**증상:**
+```
+Error: EACCES: permission denied
+# 또는
+sh: 1: vite: Permission denied
+```
+
+**해결 방법:**
+
+**Linux/Mac (가장 흔한 경우):**
+
+**방법 1: vite 실행 파일에 권한 부여 (즉시 해결)**
+```bash
+cd frontend
+
+# node_modules/.bin의 모든 실행 파일에 권한 부여
+chmod +x node_modules/.bin/*
+
+# 또는 vite만 권한 부여
+chmod +x node_modules/.bin/vite
+
+# 서버 실행
+npm run dev
+```
+
+**"Operation not permitted" 오류가 발생하는 경우:**
+
+**해결 방법 1: sudo 사용 (권한이 필요한 경우)**
+```bash
+cd frontend
+
+# sudo로 권한 부여
+sudo chmod +x node_modules/.bin/*
+
+# 소유권도 현재 사용자로 변경
+sudo chown -R $USER:$USER node_modules
+
+# 서버 실행
+npm run dev
+```
+
+**해결 방법 2: node_modules 전체 재설치 (가장 확실한 방법)**
+
+**권한 문제가 없는 경우:**
+```bash
+cd frontend
+
+# 기존 node_modules 완전 삭제
+rm -rf node_modules package-lock.json
+
+# npm 캐시 정리
+npm cache clean --force
+
+# 재설치 (올바른 권한으로 자동 설치됨)
+npm install
+
+# 서버 실행
+npm run dev
+```
+
+**권한 문제가 있는 경우 (rm -rf가 안 될 때):**
+```bash
+cd frontend
+
+# 방법 2-1: sudo로 삭제
+sudo rm -rf node_modules package-lock.json
+
+# npm 캐시 정리
+npm cache clean --force
+
+# 재설치 (현재 사용자 권한으로)
+npm install
+
+# 서버 실행
+npm run dev
+```
+
+**또는 방법 2-2: 소유권 변경 후 삭제**
+```bash
+cd frontend
+
+# 먼저 소유권을 현재 사용자로 변경
+sudo chown -R $USER:$USER node_modules package-lock.json
+
+# 그 다음 삭제 (sudo 없이 가능)
+rm -rf node_modules package-lock.json
+
+# npm 캐시 정리
+npm cache clean --force
+
+# 재설치
+npm install
+
+# 서버 실행
+npm run dev
+```
+
+**또는 방법 2-3: npm으로 직접 재설치 (삭제 없이)**
+```bash
+cd frontend
+
+# npm install --force로 강제 재설치
+npm install --force
+
+# 또는
+npm ci --force
+
+# 서버 실행
+npm run dev
+```
+
+**해결 방법 3: 파일 시스템 확인 (읽기 전용 마운트 확인)**
+```bash
+# 현재 디렉토리가 읽기 전용인지 확인
+mount | grep $(pwd)
+
+# 읽기 전용이면 쓰기 가능하도록 재마운트 (주의: 루트 권한 필요)
+# sudo mount -o remount,rw /path/to/directory
+```
+
+**방법 2: node_modules 전체 권한 수정**
+```bash
+cd frontend
+
+# 소유권 및 권한 수정
+sudo chown -R $USER:$USER node_modules
+chmod -R 755 node_modules
+
+# 특히 .bin 디렉토리
+chmod -R +x node_modules/.bin
+
+# 서버 실행
+npm run dev
+```
+
+**방법 3: npm 재설치 (권한 문제가 지속되는 경우)**
+```bash
+cd frontend
+
+# 기존 파일 삭제
+rm -rf node_modules package-lock.json
+
+# npm 캐시 정리
+npm cache clean --force
+
+# 재설치 (권한 문제 없이)
+npm install
+
+# 서버 실행
+npm run dev
+```
+
+**방법 4: npx를 사용하여 우회 (임시 해결)**
+```bash
+cd frontend
+
+# npx를 사용하면 권한 문제를 우회할 수 있음
+npx vite
+
+# 또는
+npx vite --port 5173
+```
+
+**Windows:**
+```bash
+# 관리자 권한으로 터미널 실행
+# 또는 node_modules 권한 확인
+cd frontend
+npm install --force
+npm run dev
+```
+
+**서버 환경 (Linux)에서 발생하는 경우:**
+```bash
+cd /var/www/contest-guide/ton/frontend
+
+# www-data 사용자 권한으로 실행하거나
+sudo chown -R www-data:www-data node_modules
+sudo chmod -R +x node_modules/.bin
+
+# 또는 현재 사용자로 권한 수정
+sudo chown -R $USER:$USER node_modules
+chmod -R +x node_modules/.bin
+```
+
+#### 오류 3: "Cannot find module" 또는 "Module not found"
+
+**증상:**
+```
+Error: Cannot find module 'xxx'
+```
+
+**해결 방법:**
+```bash
+cd frontend
+
+# node_modules 삭제 후 재설치
+rm -rf node_modules package-lock.json
+npm install
+
+# 또는
+npm ci
+```
+
+#### 오류 4: "Access is denied" (Windows)
+
+**증상:**
+```
+Error: Access is denied
+```
+
+**해결 방법:**
+
+**방법 1: 관리자 권한으로 실행**
+- PowerShell 또는 CMD를 관리자 권한으로 실행
+- 프로젝트 디렉토리로 이동 후 `npm run dev` 실행
+
+**방법 2: 방화벽 확인**
+```bash
+# Windows 방화벽에서 Node.js 허용 확인
+# 제어판 > 시스템 및 보안 > Windows Defender 방화벽 > 고급 설정
+```
+
+**방법 3: 바이러스 백신 소프트웨어 확인**
+- 바이러스 백신이 node_modules를 차단하는 경우 예외 추가
+
+#### 오류 5: "Port 5173 is already in use" (Vite)
+
+**증상:**
+```
+Port 5173 is in use, trying another one...
+```
+
+**해결 방법:**
+
+**방법 1: 다른 포트 명시적으로 지정**
+```bash
+# vite.config.js 수정
+export default defineConfig({
+  server: {
+    port: 3000,  // 원하는 포트로 변경
+  }
+})
+```
+
+**방법 2: 환경 변수 사용**
+```bash
+# Windows
+set PORT=3000 && npm run dev
+
+# Linux/Mac
+PORT=3000 npm run dev
+```
+
+#### 오류 6: 네트워크 접근 거부 (방화벽)
+
+**증상:**
+- 서버는 실행되지만 다른 컴퓨터에서 접속 불가
+
+**해결 방법:**
+
+**방법 1: Vite 설정에서 호스트 허용**
+```javascript
+// vite.config.js
+export default defineConfig({
+  server: {
+    host: '0.0.0.0',  // 모든 네트워크 인터페이스에서 접속 허용
+    port: 5173,
+  }
+})
+```
+
+**방법 2: 방화벽 포트 허용 (Windows)**
+```bash
+# PowerShell (관리자 권한)
+New-NetFirewallRule -DisplayName "Vite Dev Server" -Direction Inbound -LocalPort 5173 -Protocol TCP -Action Allow
+```
+
+**방법 3: 방화벽 포트 허용 (Linux)**
+```bash
+sudo ufw allow 5173/tcp
+sudo ufw reload
+```
+
+#### 종합 해결 방법
+
+**모든 오류를 한 번에 해결:**
+```bash
+cd frontend
+
+# 1. 기존 프로세스 종료 (포트 5173 사용 중인 경우)
+# Windows
+netstat -ano | findstr :5173
+# Linux/Mac
+lsof -ti:5173 | xargs kill -9
+
+# 2. node_modules 및 캐시 정리
+rm -rf node_modules package-lock.json
+npm cache clean --force
+
+# 3. 재설치
+npm install
+
+# 4. 권한 확인 (Linux/Mac)
+sudo chown -R $USER:$USER node_modules
+
+# 5. 서버 실행
+npm run dev
+```
+
+**Windows에서 관리자 권한이 필요한 경우:**
+1. PowerShell 또는 CMD를 우클릭
+2. "관리자 권한으로 실행" 선택
+3. 프로젝트 디렉토리로 이동 후 `npm run dev` 실행
 
 ### 포트 접속 문제
 
