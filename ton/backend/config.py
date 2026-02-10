@@ -41,7 +41,19 @@ def get_api_mode() -> str:
     return "real" if is_api_key_valid() else "mock"
 
 # CORS Settings
-CORS_ORIGINS = DEFAULT_CORS_ORIGINS
+# Add server IP and domain to CORS origins
+# 주의: 서버 IP 주소가 변경되면 여기를 업데이트하세요
+# 현재 서버 IP 확인: curl ifconfig.me
+SERVER_IP = os.getenv("SERVER_IP", "")  # 환경 변수로 설정 가능
+CORS_ORIGINS = DEFAULT_CORS_ORIGINS + [
+    "http://contest-guide.ac.kr",
+    "https://contest-guide.ac.kr",
+]
+# 서버 IP가 설정되어 있으면 추가
+if SERVER_IP:
+    CORS_ORIGINS.append(f"http://{SERVER_IP}")
+# 또는 직접 IP 주소를 추가할 수 있습니다:
+# CORS_ORIGINS.append("http://[서버_IP_주소]")
 
 # File Upload Settings
 MAX_IMAGE_SIZE = MAX_IMAGE_SIZE_BYTES

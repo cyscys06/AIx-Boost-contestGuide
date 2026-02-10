@@ -187,11 +187,11 @@ function AnalyzePage() {
     try {
       const response = await analyzeContest({
         userProfile: {
-          major: profile.basic.major,
-          skills: profile.skills.technical.map(s => ({ name: s.name, level: s.level })),
-          goal: profile.basic.goal,
-          hoursPerWeek: profile.availability.hoursPerWeek,
-          preferredTeamSize: profile.availability.preferredTeamSize
+          major: profile.basic?.major || null,
+          skills: (profile.skills?.technical || []).map(s => ({ name: s.name, level: s.level })),
+          goal: profile.basic?.goal || null,
+          hoursPerWeek: profile.availability?.hoursPerWeek || null,
+          preferredTeamSize: profile.availability?.preferredTeamSize || null
         },
         contest: {
           text: contestText,

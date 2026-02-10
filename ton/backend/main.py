@@ -9,7 +9,7 @@ import base64
 import time
 from typing import Optional
 
-from fastapi import FastAPI, File, Form, UploadFile, HTTPException
+from fastapi import FastAPI, File, Form, UploadFile
 from fastapi.middleware.cors import CORSMiddleware
 
 from config import (
@@ -25,7 +25,6 @@ from config import (
 )
 from schemas import (
     UserProfileInput,
-    AnalysisOptions,
     AnalysisResponse,
     ExtractionResponse,
     ExtractionData,
@@ -105,8 +104,18 @@ async def analyze(
     # Parse user profile
     try:
         profile_data = json.loads(user_profile)
+        # 빈 객체나 None 값 처리
+        if not profile_data:
+            profile_data = {}
         profile = UserProfileInput(**profile_data)
+    except json.JSONDecodeError as e:
+        return AnalysisResponse(
+            success=False,
+            error=f"Invalid user profile JSON format: {str(e)}"
+        )
     except Exception as e:
+        import traceback
+        print(f"User profile parsing error: {traceback.format_exc()}")
         return AnalysisResponse(
             success=False,
             error=f"Invalid user profile format: {str(e)}"
@@ -171,6 +180,9 @@ async def analyze(
             }
         )
     except Exception as e:
+        import traceback
+        error_details = traceback.format_exc()
+        print(f"Analysis error: {error_details}")  # 서버 콘솔에 상세 오류 출력
         return AnalysisResponse(
             success=False,
             error=f"Analysis failed: {str(e)}"

@@ -371,18 +371,26 @@ async def analyze_with_gpt(
         weeks=[]  # Simplified for now
     ) if scenario_data else None
     
+    # strengths와 concerns는 최소 1개 이상 필요
+    opportunities_list = data.get("opportunities", [])
+    warnings_list = data.get("warnings", [])
+    if not opportunities_list:
+        opportunities_list = ["공모전 참가 기회"]
+    if not warnings_list:
+        warnings_list = ["준비 과정 점검 필요"]
+    
     return AnalysisData(
         contestInfo=contest_info,
         analysis=AnalysisResult(
             recommendation=data.get("recommendation", "분석 결과를 확인하세요."),
             scores=scores,
-            strengths=data.get("opportunities", [])[:3],
-            concerns=data.get("warnings", [])[:3],
+            strengths=opportunities_list[:3],
+            concerns=warnings_list[:3],
             checklist=checklist,
             strategicVerdict=strategic_verdict,
             hiddenExpectations=hidden_expectations,
-            opportunities=data.get("opportunities", []),
-            warnings=data.get("warnings", []),
+            opportunities=opportunities_list,
+            warnings=warnings_list,
             dealBreakers=deal_breakers,
             scenario=scenario
         ),
@@ -510,10 +518,10 @@ def generate_mock_scores(profile: UserProfileInput, contest_info: ContestInfo) -
     
     return AnalysisScores(
         skillMatch=ScoreDetail(score=skill_score, label=get_label_from_score(skill_score), reason=f"보유 기술 {skill_count}개"),
-        difficulty=ScoreDetail(score=difficulty_score, label=get_label_from_score(difficulty_score, True), reason=f"{contest_info.category} 분야"),
+        difficulty=ScoreDetail(score=difficulty_score, label=get_label_from_score(difficulty_score, True), reason=f"{contest_info.category or '일반'} 분야"),
         schedulePressure=ScoreDetail(score=pressure_score, label=get_label_from_score(pressure_score, True), reason="마감 일정 기준"),
-        teamFit=ScoreDetail(score=team_score, label=get_label_from_score(team_score), reason=f"참가 형태: {contest_info.teamSize}"),
-        portfolioValue=ScoreDetail(score=portfolio_score, label=get_label_from_score(portfolio_score), reason=f"{contest_info.category} 분야 가치"),
+        teamFit=ScoreDetail(score=team_score, label=get_label_from_score(team_score), reason=f"참가 형태: {contest_info.teamSize or '무관'}"),
+        portfolioValue=ScoreDetail(score=portfolio_score, label=get_label_from_score(portfolio_score), reason=f"{contest_info.category or '일반'} 분야 가치"),
         readiness=ScoreDetail(score=readiness, label=get_label_from_score(readiness), reason="종합 평가")
     )
 
@@ -547,6 +555,12 @@ def generate_mock_analysis(profile: UserProfileInput, contest_text: str, options
     
     if scores.schedulePressure.score >= 60:
         warnings.append("일정 관리에 주의")
+    
+    # strengths와 concerns는 최소 1개 이상 필요
+    if not opportunities:
+        opportunities = ["공모전 참가 기회"]
+    if not warnings:
+        warnings = ["준비 과정 점검 필요"]
     
     hidden_expectations = [
         HiddenExpectation(insight="실제 적용 가능성이 중요할 수 있음", source="inferred", importance="high")
@@ -613,10 +627,18 @@ async def analyze_contest(
             return await analyze_with_gpt(profile, contest_text, image_base64, options)
         except Exception as e:
             logger.error(f"GPT API failed, falling back to mock: {e}")
+            import traceback
+            logger.error(f"GPT API error traceback: {traceback.format_exc()}")
             # Fall back to mock on error
     
     # Mock mode or fallback
-    return generate_mock_analysis(profile, contest_text, options)
+    try:
+        return generate_mock_analysis(profile, contest_text, options)
+    except Exception as e:
+        logger.error(f"Mock analysis failed: {e}")
+        import traceback
+        logger.error(f"Mock analysis error traceback: {traceback.format_exc()}")
+        raise
 
 
 async def extract_from_image(image_base64: str) -> Tuple[ExtractedInfo, ExtractionConfidence, str]:
